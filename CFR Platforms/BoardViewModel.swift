@@ -12,24 +12,28 @@ import SwiftUI
 @MainActor
 class BoardViewModel: ObservableObject {
     
+    @Published var stations: [Station] = []
     @Published var arrivals: [Train] = []
     @Published var departures: [Train] = []
-    @Published var selectedStation: Station
+    @Published var selectedStation: Station?
     
     @AppStorage("apiURL")
     var apiURL = "http://192.168.1.247:8000"
     
-    let stations: [Station] = [
-        Station(id: "BucurestiNord", name: "Bucharest North"),
-        Station(id: "ClujNapoca", name: "Cluj Napoca"),
-    ]
-    
-    init() {
-        selectedStation = stations[0]
+    func loadStations() async {
+        let api = API(baseURL: apiURL)
+        
+        do {
+            stations = try await api.fetchStations()
+            
+            selectedStation = stations.first
+        } catch {
+            print("Error: ", error)
+        }
     }
     
     func load() async {
-        let station = selectedStation
+        let station = selectedStation!
         
         do{
             let api = API(baseURL: apiURL)

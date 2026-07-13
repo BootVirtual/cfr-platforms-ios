@@ -14,6 +14,16 @@ class API {
         self.baseURL = baseURL
     }
     
+    func fetchStations() async throws -> [Station] {
+        let url = URL(string: baseURL + "/stations")
+        
+        let (data, _) = try await URLSession.shared.data(from: url!)
+        
+        let decoder = JSONDecoder()
+        
+        return try decoder.decode([Station].self, from: data)
+    }
+    
     func fetchData(for station: Station) async throws -> Board {
         let url = URL(string: baseURL + "/stations/" + station.id)
         

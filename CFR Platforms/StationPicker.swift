@@ -24,7 +24,7 @@ struct StationPicker: View {
             }
         } label: {
             HStack {
-                Text(viewModel.selectedStation.name)
+                Text(viewModel.selectedStation?.name ?? "Loading...")
                     .font(.headline)
                 Image(systemName: "chevron.down")
                     .font(.caption)
