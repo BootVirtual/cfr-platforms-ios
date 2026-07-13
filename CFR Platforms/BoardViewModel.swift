@@ -12,6 +12,7 @@ internal import Combine
 class BoardViewModel: ObservableObject {
     
     @Published var arrivals: [Train] = []
+    @Published var departures: [Train] = []
     
     private let api = API()
     
@@ -19,5 +20,6 @@ class BoardViewModel: ObservableObject {
         let board = try! await api.fetchData()
         
         arrivals = board.arrivals
+        departures = board.departures
     }
 }

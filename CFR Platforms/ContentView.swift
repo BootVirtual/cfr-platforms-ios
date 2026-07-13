@@ -11,17 +11,17 @@ struct ContentView: View {
     @StateObject private var viewModel = BoardViewModel()
     
     var body: some View {
-        List(viewModel.arrivals) { train in
-            VStack(alignment: .leading) {
-                Text(
-                    "\(train.type) \(train.number)"
-                )
-                .font(.headline)
+        NavigationStack{
+            TabView{
+                ArrivalsView(viewModel: viewModel)
+                    .tabItem{
+                        Label("Arrivals", systemImage: "arrow.down")
+                    }
                 
-                Text(train.destination)
-                
-                Text(train.time)
-                    .foregroundStyle(.secondary)
+                DeparturesView(viewModel: viewModel)
+                    .tabItem {
+                        Label("Departures", systemImage: "arrow.up")
+                    }
             }
         }
         .task {
