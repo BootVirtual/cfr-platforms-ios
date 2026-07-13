@@ -14,6 +14,15 @@ struct ContentView: View {
         TabView{
             NavigationStack{
                 ArrivalsView(viewModel: viewModel)
+                    .toolbar{
+                        ToolbarItem(placement: .topBarTrailing) {
+                            NavigationLink {
+                                SettingsView(viewModel: viewModel)
+                            } label: {
+                                Image(systemName: "gear")
+                            }
+                        }
+                    }
             }
             .tabItem{
                 Label("Arrivals", systemImage: "arrow.down")
@@ -21,6 +30,16 @@ struct ContentView: View {
             
             NavigationStack {
                 DeparturesView(viewModel: viewModel)
+                    .toolbar{
+                        ToolbarItem(placement: .topBarTrailing) {
+                            NavigationLink {
+                                SettingsView(viewModel: viewModel)
+                            } label: {
+                                Image(systemName: "gear")
+                            }
+                        }
+                    }
+                
 
             }
             .tabItem {

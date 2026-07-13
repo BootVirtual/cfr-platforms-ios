@@ -14,6 +14,7 @@ class BoardViewModel: ObservableObject {
     @Published var arrivals: [Train] = []
     @Published var departures: [Train] = []
     @Published var selectedStation: Station
+    @Published var apiURL: String = "http://192.168.1.247:8000"
     
     let stations: [Station] = [
         Station(id: "BucurestiNord", name: "Bucharest North"),
@@ -24,12 +25,16 @@ class BoardViewModel: ObservableObject {
         selectedStation = stations[0]
     }
     
-    private let api = API()
-    
     func load() async {
-        let board = try! await api.fetchData(for: selectedStation)
-        
-        arrivals = board.arrivals
-        departures = board.departures
+        do{
+            let api = API(baseURL: apiURL)
+            
+            let board = try await api.fetchData(for: selectedStation)
+            
+            arrivals = board.arrivals
+            departures = board.departures
+        } catch {
+            print("Error: ", error)
+        }
     }
 }
