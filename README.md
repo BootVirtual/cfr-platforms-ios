@@ -6,6 +6,10 @@ This project serves as a client for my [CFR Arrivals/Departures API](https://git
 
 This app is provided as-is, the accuracy of the displayed information is not guaranteed (more on that on the API Readme, link above).
 
+## Features
+
+The app is a departures/arrivals board, currently supporting Bucharest North and Cluj Napoca. I should probably also add features like widgets (and maybe even live activities?), but I swear, Xcode and Swift are slowly killing me.
+
 ## Endnote
 
 This project is being developed as a submission to [HackClub](https://hackclub.com/). It is still very much a WIP.
