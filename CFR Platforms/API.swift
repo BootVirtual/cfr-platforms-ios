@@ -8,8 +8,8 @@
 import Foundation
 
 class API {
-    func fetchData() async throws -> Board {
-        let url = URL(string: "http://192.168.1.247:8000/stations/BucurestiNord")
+    func fetchData(for station: Station) async throws -> Board {
+        let url = URL(string: "http://192.168.1.247:8000/stations/" + station.id)
         
         let (data, _) = try await URLSession.shared.data(from: url!)
         

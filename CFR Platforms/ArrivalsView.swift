@@ -13,5 +13,10 @@ struct ArrivalsView: View {
     var body: some View {
         TrainList(trains: viewModel.arrivals)
             .navigationTitle(Text("Arrivals"))
+            .toolbar {
+                ToolbarItem(placement: .principal){
+                    StationPicker(viewModel: viewModel)
+                }
+            }
     }
 }

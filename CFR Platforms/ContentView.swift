@@ -11,17 +11,20 @@ struct ContentView: View {
     @StateObject private var viewModel = BoardViewModel()
     
     var body: some View {
-        NavigationStack{
-            TabView{
+        TabView{
+            NavigationStack{
                 ArrivalsView(viewModel: viewModel)
-                    .tabItem{
-                        Label("Arrivals", systemImage: "arrow.down")
-                    }
-                
+            }
+            .tabItem{
+                Label("Arrivals", systemImage: "arrow.down")
+            }
+            
+            NavigationStack {
                 DeparturesView(viewModel: viewModel)
-                    .tabItem {
-                        Label("Departures", systemImage: "arrow.up")
-                    }
+
+            }
+            .tabItem {
+                Label("Departures", systemImage: "arrow.up")
             }
         }
         .task {
