@@ -8,14 +8,25 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var viewModel = BoardViewModel()
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        List(viewModel.arrivals) { train in
+            VStack(alignment: .leading) {
+                Text(
+                    "\(train.type) \(train.number)"
+                )
+                .font(.headline)
+                
+                Text(train.destination)
+                
+                Text(train.time)
+                    .foregroundStyle(.secondary)
+            }
         }
-        .padding()
+        .task {
+            await viewModel.load()
+        }
     }
 }
 
