@@ -12,6 +12,9 @@ struct DeparturesView: View {
     
     var body: some View {
         TrainList(trains: viewModel.departures)
+            .refreshable {
+                await viewModel.load()
+            }
             .navigationTitle(Text("Departures"))
             .toolbar {
                 ToolbarItem(placement: .principal){

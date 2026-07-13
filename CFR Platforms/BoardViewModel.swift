@@ -7,6 +7,7 @@
 
 import Foundation
 internal import Combine
+import SwiftUI
 
 @MainActor
 class BoardViewModel: ObservableObject {
@@ -14,7 +15,9 @@ class BoardViewModel: ObservableObject {
     @Published var arrivals: [Train] = []
     @Published var departures: [Train] = []
     @Published var selectedStation: Station
-    @Published var apiURL: String = "http://192.168.1.247:8000"
+    
+    @AppStorage("apiURL")
+    var apiURL = "http://192.168.1.247:8000"
     
     let stations: [Station] = [
         Station(id: "BucurestiNord", name: "Bucharest North"),
@@ -26,10 +29,12 @@ class BoardViewModel: ObservableObject {
     }
     
     func load() async {
+        let station = selectedStation
+        
         do{
             let api = API(baseURL: apiURL)
             
-            let board = try await api.fetchData(for: selectedStation)
+            let board = try await api.fetchData(for: station)
             
             arrivals = board.arrivals
             departures = board.departures
