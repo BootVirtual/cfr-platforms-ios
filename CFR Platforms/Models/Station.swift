@@ -8,21 +8,9 @@
 import Foundation
 import AppIntents
 
-struct StationQuery: EntityQuery {
-    func entities(for identifiers: [String]) async throws -> [Station] {
-        let stations = StationCache.stations
-        
-        return stations.filter{
-            identifiers.contains($0.id)
-        }
-    }
-    
-    func suggestedEntities() async throws -> [Station] {
-        StationCache.stations
-    }
-}
-
 struct Station: Identifiable, Hashable, Codable, AppEntity {
+    typealias ID = String
+    
     let id: String
     let name: String
     

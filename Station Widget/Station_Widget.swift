@@ -85,10 +85,14 @@ struct Station_WidgetEntryView : View {
 }
 
 struct Station_Widget: Widget {
-    let kind: String = "Station Widget"
+    let kind: String = "com.marctg.station-widget"
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
+        AppIntentConfiguration(
+            kind: kind,
+            intent: ConfigurationAppIntent.self,
+            provider: Provider()
+        ) { entry in
             Station_WidgetEntryView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
