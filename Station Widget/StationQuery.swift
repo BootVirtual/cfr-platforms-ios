@@ -12,20 +12,10 @@ struct StationQuery: EntityQuery {
     func entities(for identifiers: [StationEntity.ID]) async throws -> [StationEntity] {
         let stations = try await loadStations()
         
-        let entitiesByID = Dictionary(
-            uniqueKeysWithValues: stations.map {
-                (
-                    $0.id,
-                    StationEntity(
-                        id: $0.id,
-                        name: $0.name
-                    )
-                )
+        let resolved = identifiers.compactMap{ identifier in
+            stations.first(where: {$0.id == identifier}).map {
+                StationEntity(id: $0.id, name: $0.name)
             }
-        )
-        
-        let resolved = identifiers.compactMap{
-            entitiesByID[$0]
         }
         
         print("StationQuery requested IDs: ", identifiers)
@@ -46,10 +36,6 @@ struct StationQuery: EntityQuery {
                 name: $0.name
             )
         }
-    }
-    
-    func defaultResult() async -> StationEntity? {
-        try? await suggestedEntities().first
     }
     
     private func loadStations() async throws -> [Station] {

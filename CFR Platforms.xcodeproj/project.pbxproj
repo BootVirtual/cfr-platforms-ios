@@ -74,7 +74,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				API.swift,
-				BoardViewModel.swift,
 				Models/Board.swift,
 				Models/Station.swift,
 				Models/Train.swift,

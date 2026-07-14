@@ -7,12 +7,25 @@
 		<key>CFR Platforms.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>1</integer>
 		</dict>
 		<key>Station WidgetExtension.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>744E0FA93004D85C006E1B5D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7488E92C30060D7100201509</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

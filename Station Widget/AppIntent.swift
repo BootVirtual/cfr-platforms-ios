@@ -7,7 +7,7 @@
 
 import AppIntents
 
-struct ConfigurationAppIntent: WidgetConfigurationIntent {
+struct ConfigurationAppIntentV2: WidgetConfigurationIntent {
     static var title: LocalizedStringResource { "CFR Arrivals/Departures" }
     static var description: IntentDescription { "Display live arrivals and departures from CFR stations." }
 
@@ -16,4 +16,11 @@ struct ConfigurationAppIntent: WidgetConfigurationIntent {
     
     @Parameter(title: "Board")
     var board: BoardType?
+    
+    static var parameterSummary: some ParameterSummary {
+        Summary("Configure the board"){
+            \.$station
+            \.$board
+        }
+    }
 }

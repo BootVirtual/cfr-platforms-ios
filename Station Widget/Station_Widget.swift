@@ -18,7 +18,7 @@ struct Provider: AppIntentTimelineProvider {
         )
     }
 
-    func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> BoardEntry {
+    func snapshot(for configuration: ConfigurationAppIntentV2, in context: Context) async -> BoardEntry {
         if context.isPreview{
             return BoardEntry(
                 date: Date(),
@@ -34,8 +34,9 @@ struct Provider: AppIntentTimelineProvider {
         )
     }
     
-    func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<BoardEntry> {
-        print("New timeline requested for: ", configuration.station?.id ?? "nil")
+    func timeline(for configuration: ConfigurationAppIntentV2, in context: Context) async -> Timeline<BoardEntry> {
+        print("REQ STATION: ", configuration.station?.id ?? "nil")
+        print("REQ BOARD: ", configuration.board ?? "nil")
         
         let fallback = placeholder(in: context)
         
@@ -79,7 +80,7 @@ struct Provider: AppIntentTimelineProvider {
             let api = API(baseURL: apiURL)
             
             let board = try await api.fetchData(
-                for: Station(id: station.id, name: station.name)
+                for: Station(id: station.id, name: station.name ?? station.id)
             )
             
             return BoardEntry(
@@ -118,7 +119,7 @@ struct Station_WidgetEntryView : View {
     var body: some View {
         VStack (alignment: .leading){
             HStack{
-                Text(entry.station.name)
+                Text(entry.station.name ?? entry.station.id)
                 
                 if(entry.boardType == .arrivals){
                     Text("Arrivals")
@@ -146,7 +147,7 @@ struct Station_Widget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(
             kind: kind,
-            intent: ConfigurationAppIntent.self,
+            intent: ConfigurationAppIntentV2.self,
             provider: Provider()) { entry in
             Station_WidgetEntryView(entry: entry)
         }
