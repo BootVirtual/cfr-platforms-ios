@@ -9,16 +9,23 @@ import Foundation
 import AppIntents
 
 struct StationEntity: AppEntity, Identifiable, Hashable {
+    typealias ID = String
+    
     static var typeDisplayRepresentation: TypeDisplayRepresentation {
         TypeDisplayRepresentation(name: "Station")
     }
     
-    static let defaultQuery = StationQuery()
+    static var defaultQuery = StationQuery()
     
-    let id: Station.ID
+    let id: String
     let name: String
     
     var displayRepresentation: DisplayRepresentation {
         DisplayRepresentation(title: "\(name)")
+    }
+    
+    init(id: String, name: String){
+        self.id = id
+        self.name = name
     }
 }

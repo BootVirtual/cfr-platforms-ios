@@ -12,7 +12,7 @@ struct Provider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> BoardEntry {
         BoardEntry(
             date: Date(),
-            station: StationEntity(id: "BucurestiNord", name: "Bucharest North"),
+            station: StationEntity(id: "BucurestiNord", name: "București Nord"),
             boardType: .departures,
             board: Board(arrivals: [], departures: [])
         )
@@ -21,33 +21,71 @@ struct Provider: AppIntentTimelineProvider {
     func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> BoardEntry {
         BoardEntry(
             date: Date(),
-            station: StationEntity(id: "BucurestiNord", name: "Bucharest North"),
+            station: StationEntity(id: "BucurestiNord", name: "București Nord"),
             boardType: .departures,
             board: Board(arrivals: [], departures: [])
         )
     }
     
     func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<BoardEntry> {
-        guard let apiURL = UserDefaults(suiteName: "group.com.marctg.cfr-platforms")?.string(forKey: "apiURL") else { return Timeline(entries: [], policy: .never) }
         
-        let api = API(baseURL: apiURL)
-                      
-        guard
-            let station = configuration.station,
-            let boardType = configuration.board
-        else {
-            return Timeline(entries: [], policy: .never)
+        let station: StationEntity?
+        
+        if let configuredStation = configuration.station {
+            station = configuredStation
+        } else {
+            station = await StationQuery().defaultResult()
+        }
+        
+        let boardType = configuration.board ?? .departures
+        
+        guard let station else {
+            print("No station configured")
+            
+            return Timeline(
+                entries: [placeholder(in: context)],
+                policy: .after(Date().addingTimeInterval(30))
+            )
         }
         
         guard
-            let board = try? await api.fetchData(for: Station(id: station.id, name: station.name))
+            let apiURL = UserDefaults(suiteName: "group.com.marctg.cfr-platforms")?.string(forKey: "apiURL"),
+            !apiURL.isEmpty
         else{
-            return Timeline(entries: [], policy: .never)
+            print("apiURL not configured")
+            
+            return Timeline(
+                entries: [placeholder(in: context)],
+                policy: .after(Date().addingTimeInterval(30))
+            )
         }
         
-        let entry = BoardEntry(date: Date(), station: station, boardType: boardType, board: board)
-        
-        return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(60)))
+        do {
+            let api = API(baseURL: apiURL)
+            
+            let board = try await api.fetchData(
+                for: Station(id: station.id, name: station.name)
+            )
+            
+            let entry = BoardEntry(
+                date: Date(),
+                station: station,
+                boardType: boardType,
+                board: board
+            )
+            
+            return Timeline(
+                entries: [entry],
+                policy: .after(Date().addingTimeInterval(60))
+            )
+        } catch {
+            print("Widget request failed: ", error)
+            
+            return Timeline(
+                entries: [placeholder(in: context)],
+                policy: .after(Date().addingTimeInterval(30))
+            )
+        }
     }
 
 //    func relevances() async -> WidgetRelevances<ConfigurationAppIntent> {

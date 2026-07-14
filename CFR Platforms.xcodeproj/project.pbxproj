@@ -82,14 +82,6 @@
 			);
 			target = 7488E92C30060D7100201509 /* Station WidgetExtension */;
 		};
-		7488E9553006372300201509 /* Exceptions for "Station Widget" folder in "CFR Platforms" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				StationEntity.swift,
-				StationQuery.swift,
-			);
-			target = 744E0FA93004D85C006E1B5D /* CFR Platforms */;
-		};
 		7495E46630063DB200BEF153 /* Exceptions for "CFR Platforms" folder in "CFR Platforms" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -122,7 +114,6 @@
 		7488E93330060D7200201509 /* Station Widget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				7488E9553006372300201509 /* Exceptions for "Station Widget" folder in "CFR Platforms" target */,
 				7488E94030060D7700201509 /* Exceptions for "Station Widget" folder in "Station WidgetExtension" target */,
 			);
 			path = "Station Widget";
