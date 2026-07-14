@@ -15,7 +15,15 @@ class BoardViewModel: ObservableObject {
     @Published var stations: [Station] = []
     @Published var arrivals: [Train] = []
     @Published var departures: [Train] = []
-    @Published var selectedStation: Station?
+    
+    @AppStorage("selectedStationID")
+    private var selectedStationID: String = ""
+    
+    @Published var selectedStation: Station? {
+        didSet {
+            selectedStationID = selectedStation?.id ?? ""
+        }
+    }
     
     @AppStorage("apiURL")
     var apiURL = "http://192.168.1.247:8000"
@@ -23,10 +31,13 @@ class BoardViewModel: ObservableObject {
     func loadStations() async {
         let api = API(baseURL: apiURL)
         
+        stations = api.cachedStations()
+        selectedStation = stations.first(where: {$0.id == selectedStationID}) ?? stations.first
+        
         do {
             stations = try await api.fetchStations()
             
-            selectedStation = stations.first
+            selectedStation = stations.first(where: {$0.id == selectedStationID}) ?? stations.first
         } catch {
             print("Error: ", error)
         }

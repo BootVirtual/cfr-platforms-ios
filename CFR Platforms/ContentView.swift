@@ -10,8 +10,11 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var viewModel = BoardViewModel()
     
+    @AppStorage("selectedTab")
+    private var selectedTab = 0
+    
     var body: some View {
-        TabView{
+        TabView (selection: $selectedTab){
             NavigationStack{
                 ArrivalsView(viewModel: viewModel)
                     .toolbar{
@@ -27,6 +30,7 @@ struct ContentView: View {
             .tabItem{
                 Label("Arrivals", systemImage: "arrow.down")
             }
+            .tag(0)
             
             NavigationStack {
                 DeparturesView(viewModel: viewModel)
@@ -45,6 +49,7 @@ struct ContentView: View {
             .tabItem {
                 Label("Departures", systemImage: "arrow.up")
             }
+            .tag(1)
         }
         .task {
             await viewModel.loadStations()

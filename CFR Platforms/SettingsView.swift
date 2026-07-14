@@ -19,5 +19,11 @@ struct SettingsView: View {
             }
         }
         .navigationTitle(Text("Settings"))
+        .onDisappear {
+            Task {
+                await viewModel.loadStations()
+                await viewModel.load()
+            }
+        }
     }
 }
