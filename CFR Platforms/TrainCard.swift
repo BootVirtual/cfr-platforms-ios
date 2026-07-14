@@ -19,8 +19,10 @@ struct TrainCard: View {
                 }
                 Text(train.destination)
                     .font(.title2)
-                Text("operated by " + train.operator)
-                    .foregroundStyle(.secondary)
+                if !train.operator.isEmpty {
+                    Text("operated by " + train.operator)
+                        .foregroundStyle(.secondary)
+                }
             }
             Spacer()
             VStack(alignment: .trailing){
