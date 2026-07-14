@@ -20,5 +20,7 @@ Live activities could be an interesting feature, but honestly, seeing how (in)ac
 
 ## Endnote
 
+A demo of this client as well as the API behind it (mentioned above) is available at https://youtu.be/gvR8AaXw0cc.
+
 This project is being developed as a submission to [HackClub](https://hackclub.com/). It is still very much a WIP.
 
