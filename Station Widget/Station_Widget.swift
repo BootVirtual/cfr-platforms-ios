@@ -49,7 +49,7 @@ struct Provider: AppIntentTimelineProvider {
         }
         
         guard
-            let apiURL = SharedConfiguration.defaults?.string(forKey: "apiURL"),
+            let apiURL = SharedConfiguration.defaults?.string(forKey: SharedConfiguration.apiURLkey),
             !apiURL.isEmpty
         else{
             print("apiURL not configured")

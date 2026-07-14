@@ -25,7 +25,7 @@ class BoardViewModel: ObservableObject {
         }
     }
     
-    @AppStorage("apiURL", store: SharedConfiguration.defaults)
+    @AppStorage(SharedConfiguration.apiURLkey, store: SharedConfiguration.defaults)
     var apiURL = SharedConfiguration.defaultAPIURL
     
     func loadStations() async {

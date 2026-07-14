@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 struct SettingsView: View {
     @ObservedObject var viewModel: BoardViewModel
@@ -21,8 +22,15 @@ struct SettingsView: View {
         .navigationTitle(Text("Settings"))
         .onDisappear {
             Task {
+                SharedConfiguration.defaults?.set(
+                    viewModel.apiURL,
+                    forKey: SharedConfiguration.apiURLkey
+                )
+                
                 await viewModel.loadStations()
                 await viewModel.load()
+                
+                WidgetCenter.shared.reloadAllTimelines()
             }
         }
     }

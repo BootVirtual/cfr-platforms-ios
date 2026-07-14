@@ -10,6 +10,7 @@ import Foundation
 enum SharedConfiguration {
     static let appGroup = "group.com.marctg.cfr-platforms"
     static let defaultAPIURL = "http://192.168.1.247:8000"
+    static let apiURLkey = "apiURL"
     
     static var defaults: UserDefaults? {
         UserDefaults(suiteName: appGroup)
@@ -21,8 +22,8 @@ enum SharedConfiguration {
             return
         }
         
-        if defaults.object(forKey: "apiURL") == nil {
-            defaults.set(defaultAPIURL, forKey: "apiURL")
+        if defaults.object(forKey: apiURLkey) == nil {
+            defaults.set(defaultAPIURL, forKey: apiURLkey)
         }
     }
 }
