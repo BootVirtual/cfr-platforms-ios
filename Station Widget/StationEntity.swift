@@ -8,12 +8,8 @@
 import Foundation
 import AppIntents
 
-struct StationEntity: AppEntity, Identifiable, Hashable {
-    typealias ID = String
-    
-    static var typeDisplayRepresentation: TypeDisplayRepresentation {
-        TypeDisplayRepresentation(name: "Station")
-    }
+struct StationEntity: AppEntity, Hashable {
+    static let typeDisplayRepresentation = TypeDisplayRepresentation(name: "Station")
     
     static var defaultQuery = StationQuery()
     
@@ -22,10 +18,5 @@ struct StationEntity: AppEntity, Identifiable, Hashable {
     
     var displayRepresentation: DisplayRepresentation {
         DisplayRepresentation(title: "\(name)")
-    }
-    
-    init(id: String, name: String){
-        self.id = id
-        self.name = name
     }
 }

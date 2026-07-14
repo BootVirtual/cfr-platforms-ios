@@ -19,44 +19,59 @@ struct Provider: AppIntentTimelineProvider {
     }
 
     func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> BoardEntry {
-        BoardEntry(
-            date: Date(),
-            station: StationEntity(id: "BucurestiNord", name: "București Nord"),
-            boardType: .departures,
-            board: Board(arrivals: [], departures: [])
+        if context.isPreview{
+            return BoardEntry(
+                date: Date(),
+                station: configuration.station ?? StationEntity(id: "BucurestiNord", name: "București Nord"),
+                boardType: configuration.board ?? .departures,
+                board: Board(arrivals: [], departures: [])
+            )
+        }
+        
+        return await loadEntry(
+            station: configuration.station ?? StationEntity(id: "BucurestiNord", name: "București Nord"),
+            boardType: configuration.board ?? .departures,
         )
     }
     
     func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<BoardEntry> {
+        print("New timeline requested for: ", configuration.station?.id ?? "nil")
         
-        let station: StationEntity?
+        let fallback = placeholder(in: context)
         
-        if let configuredStation = configuration.station {
-            station = configuredStation
-        } else {
-            station = await StationQuery().defaultResult()
-        }
-        
-        let boardType = configuration.board ?? .departures
-        
-        guard let station else {
+        guard let station = configuration.station else {
             print("No station configured")
             
             return Timeline(
-                entries: [placeholder(in: context)],
+                entries: [fallback],
                 policy: .after(Date().addingTimeInterval(30))
             )
         }
+    
+        let entry = await loadEntry(
+            station: station,
+            boardType: configuration.board ?? .departures
+        )
         
+        return Timeline(
+            entries: [entry],
+            policy: .after(Date().addingTimeInterval(60))
+        )
+        
+    }
+    
+    private func loadEntry(station: StationEntity, boardType: BoardType) async -> BoardEntry {
         guard
             let apiURL = SharedConfiguration.defaults?.string(forKey: SharedConfiguration.apiURLkey),
             !apiURL.isEmpty
         else{
             print("apiURL not configured")
             
-            return Timeline(
-                entries: [placeholder(in: context)],
-                policy: .after(Date().addingTimeInterval(30))
+            return BoardEntry(
+                date: Date(),
+                station: station,
+                boardType: boardType,
+                board: Board(arrivals: [], departures: [])
             )
         }
         
@@ -67,23 +82,20 @@ struct Provider: AppIntentTimelineProvider {
                 for: Station(id: station.id, name: station.name)
             )
             
-            let entry = BoardEntry(
+            return BoardEntry(
                 date: Date(),
                 station: station,
                 boardType: boardType,
                 board: board
             )
-            
-            return Timeline(
-                entries: [entry],
-                policy: .after(Date().addingTimeInterval(60))
-            )
         } catch {
             print("Widget request failed: ", error)
             
-            return Timeline(
-                entries: [placeholder(in: context)],
-                policy: .after(Date().addingTimeInterval(30))
+            return BoardEntry(
+                date: Date(),
+                station: station,
+                boardType: boardType,
+                board: Board(arrivals: [], departures: [])
             )
         }
     }
