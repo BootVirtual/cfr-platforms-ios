@@ -104,29 +104,90 @@ struct BoardEntry: TimelineEntry{
 
 struct Station_WidgetEntryView : View {
     var entry: BoardEntry
+    
+    @Environment(\.widgetFamily) private var widgetFamily
 
     var body: some View {
-        VStack (alignment: .leading){
+        let trains = entry.boardType == .arrivals ? entry.board.arrivals : entry.board.departures
+        
+        let trainCount = widgetFamily == .systemMedium ? 3 : 8
+        
+        VStack (alignment: .leading, spacing: 5){
             HStack{
                 Text(entry.station.name)
-                
-                if(entry.boardType == .arrivals){
-                    Text("Arrivals")
-                }
-                else{
-                    Text("Departures")
+                    .font(.headline)
+                    .lineLimit(1)
+                    
+                Spacer(minLength: 4)
+                if entry.boardType == .arrivals {
+                    Label("Arrivals", systemImage: "arrow.down.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .labelStyle(.titleAndIcon)
+                } else {
+                    Label("Departures", systemImage: "arrow.up.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .labelStyle(.titleAndIcon)
                 }
             }
-            .font(.headline)
-            
-            let trains = entry.boardType == .arrivals ? entry.board.arrivals : entry.board.departures
-            
-            ForEach(trains.prefix(3)) { train in
-                HStack{
-                    Text(train.type + " " + train.number)
+            if trains.isEmpty {
+                // TODO
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(
+                        Array(trains.prefix(trainCount).enumerated()),
+                        id: \.element.id
+                    ) { index, train in
+                        let delay = Int(train.delay) ?? 0
+                        HStack (spacing: 10) {
+                            Text(train.time)
+                                .font(.system(.body, design: .monospaced, weight: .semibold))
+                                .monospacedDigit()
+                                .frame(width: 56, alignment: .leading)
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(train.destination)
+                                    .font(.subheadline.weight(.semibold))
+                                    .lineLimit(1)
+                                Text(train.type + " " + train.number)
+                                    .font(.system(.caption, design: .monospaced))
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                            }
+                            
+                            Spacer()
+                            
+                            VStack (alignment: .trailing, spacing: 2){
+                                if delay > 0 {
+                                    Text("+\(delay) min")
+                                        .font(.caption.weight(.bold))
+                                        .foregroundStyle(.red)
+                                } else {
+                                    Text("On time")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(.green)
+                                }
+                                
+                                if !train.platform.isEmpty {
+                                    Text("Pl. " + train.platform)
+                                        .font(.system(.caption, design: .monospaced))
+                                        .foregroundStyle(.secondary)
+
+                                }
+                            }
+                            .frame(minWidth: 60, alignment: .trailing)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 2)
+                        
+                        if index < min(trains.count, trainCount) - 1 {
+                            Divider()
+                        }
+                    }
                 }
             }
         }
+        .containerBackground(.white, for: .widget)
     }
 }
 
@@ -143,6 +204,9 @@ struct ArrivalsWidget: Widget {
         ) { entry in
             Station_WidgetEntryView(entry: entry)
         }
+        .supportedFamilies([.systemMedium, .systemLarge])
+        .configurationDisplayName("Arrivals")
+        .description("Shows the next arrivals at a chosen station.")
     }
 }
 
@@ -159,6 +223,9 @@ struct DeparturesWidget: Widget {
         ) { entry in
             Station_WidgetEntryView(entry: entry)
         }
+        .supportedFamilies([.systemMedium, .systemLarge])
+        .configurationDisplayName("Departures")
+        .description("Shows the next departures at a chosen station.")
     }
 }
 
@@ -171,14 +238,34 @@ struct DeparturesWidget: Widget {
         boardType: .departures,
         board: Board(
             arrivals: [],
-            departures: [Train(
-                type: "IR",
-                number: "1234",
-                destination: "Craiova",
-                operator: "Transferoviar",
-                time: "12:34",
-                delay: "15",
-                platform: "12")
+            departures: [
+                Train(
+                    type: "IR",
+                    number: "1234",
+                    destination: "Craiova",
+                    operator: "Transferoviar",
+                    time: "12:34",
+                    delay: "15",
+                    platform: "1"
+                ),
+                Train(
+                    type: "RE",
+                    number: "56789",
+                    destination: "Giurgiu",
+                    operator: "Transferoviar",
+                    time: "12:50",
+                    delay: "",
+                    platform: "12"
+                ),
+                Train(
+                    type: "IC",
+                    number: "17",
+                    destination: "Suceava",
+                    operator: "Transferoviar",
+                    time: "13:00",
+                    delay: "",
+                    platform: "14"
+                ),
             ]
         )
     )
