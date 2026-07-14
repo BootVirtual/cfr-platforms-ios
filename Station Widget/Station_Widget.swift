@@ -8,97 +8,86 @@
 import WidgetKit
 import SwiftUI
 
-struct Provider: AppIntentTimelineProvider {
+struct Provider: TimelineProvider {
+    let boardType: BoardType
+    let stationIDKey: String
+    
     func placeholder(in context: Context) -> BoardEntry {
         BoardEntry(
             date: Date(),
-            station: StationEntity(id: "BucurestiNord", name: "București Nord"),
+            station: Station(id: "BucurestiNord", name: "București Nord"),
             boardType: .departures,
             board: Board(arrivals: [], departures: [])
         )
     }
 
-    func snapshot(for configuration: ConfigurationAppIntentV2, in context: Context) async -> BoardEntry {
-        if context.isPreview{
-            return BoardEntry(
-                date: Date(),
-                station: configuration.station ?? StationEntity(id: "BucurestiNord", name: "București Nord"),
-                boardType: configuration.board ?? .departures,
-                board: Board(arrivals: [], departures: [])
-            )
-        }
-        
-        return await loadEntry(
-            station: configuration.station ?? StationEntity(id: "BucurestiNord", name: "București Nord"),
-            boardType: configuration.board ?? .departures,
-        )
+    func getSnapshot(in context: Context, completion: @escaping (BoardEntry) -> Void
+    ) {
+        completion(placeholder(in: context))
     }
     
-    func timeline(for configuration: ConfigurationAppIntentV2, in context: Context) async -> Timeline<BoardEntry> {
-        print("REQ STATION: ", configuration.station?.id ?? "nil")
-        print("REQ BOARD: ", configuration.board ?? "nil")
-        
-        let fallback = placeholder(in: context)
-        
-        guard let station = configuration.station else {
-            print("No station configured")
+    func getTimeline(in context: Context, completion: @escaping (Timeline<BoardEntry>) -> Void) {
+        Task{
+            let timeline = await makeTimeline(in: context)
+            completion(timeline)
+        }
+    }
+    
+    private func makeTimeline(in context: Context) async -> Timeline<BoardEntry> {
+        guard let selectedStationID = SharedConfiguration.defaults?.string(forKey: stationIDKey) else {
+            print("No station in: ", stationIDKey)
             
-            return Timeline(
-                entries: [fallback],
-                policy: .after(Date().addingTimeInterval(30))
-            )
+            return retryTimeline(entry: placeholder(in: context))
         }
-    
-        let entry = await loadEntry(
-            station: station,
-            boardType: configuration.board ?? .departures
-        )
         
-        return Timeline(
-            entries: [entry],
-            policy: .after(Date().addingTimeInterval(60))
-        )
+        guard let station = StationCache.stations.first(where: {$0.id == selectedStationID}) else {
+            print("Station not in cache")
+            
+            return retryTimeline(entry: placeholder(in: context))
+        }
         
-    }
-    
-    private func loadEntry(station: StationEntity, boardType: BoardType) async -> BoardEntry {
         guard
             let apiURL = SharedConfiguration.defaults?.string(forKey: SharedConfiguration.apiURLkey),
             !apiURL.isEmpty
         else{
             print("apiURL not configured")
             
-            return BoardEntry(
-                date: Date(),
-                station: station,
-                boardType: boardType,
-                board: Board(arrivals: [], departures: [])
-            )
+            return retryTimeline(entry: placeholder(in: context))
         }
         
         do {
-            let api = API(baseURL: apiURL)
+            let board = try await API(baseURL: apiURL).fetchData(for: station)
             
-            let board = try await api.fetchData(
-                for: Station(id: station.id, name: station.name ?? station.id)
-            )
-            
-            return BoardEntry(
+            let entry = BoardEntry(
                 date: Date(),
                 station: station,
                 boardType: boardType,
                 board: board
             )
-        } catch {
-            print("Widget request failed: ", error)
             
-            return BoardEntry(
-                date: Date(),
-                station: station,
-                boardType: boardType,
-                board: Board(arrivals: [], departures: [])
+            return Timeline(
+                entries: [entry],
+                policy: .after(Date().addingTimeInterval(60))
+            )
+        } catch {
+            print("Request failed: ", error)
+            
+            return retryTimeline(
+                entry: BoardEntry(
+                    date: Date(),
+                    station: station,
+                    boardType: boardType,
+                    board: Board(arrivals: [], departures: [])
+                )
             )
         }
+    }
+    
+    private func retryTimeline(entry: BoardEntry) -> Timeline<BoardEntry> {
+        Timeline(
+            entries: [entry],
+            policy: .after(Date().addingTimeInterval(30))
+        )
     }
 
 //    func relevances() async -> WidgetRelevances<ConfigurationAppIntent> {
@@ -108,7 +97,7 @@ struct Provider: AppIntentTimelineProvider {
 
 struct BoardEntry: TimelineEntry{
     let date: Date
-    let station: StationEntity
+    let station: Station
     let boardType: BoardType
     let board: Board
 }
@@ -119,7 +108,7 @@ struct Station_WidgetEntryView : View {
     var body: some View {
         VStack (alignment: .leading){
             HStack{
-                Text(entry.station.name ?? entry.station.id)
+                Text(entry.station.name)
                 
                 if(entry.boardType == .arrivals){
                     Text("Arrivals")
@@ -141,25 +130,44 @@ struct Station_WidgetEntryView : View {
     }
 }
 
-struct Station_Widget: Widget {
-    let kind: String = "com.marctg.station-widget"
+struct ArrivalsWidget: Widget {
+    let kind: String = "com.marctg.cfr-platforms.arrivals-widget"
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(
-            kind: kind,
-            intent: ConfigurationAppIntentV2.self,
-            provider: Provider()) { entry in
+        StaticConfiguration(
+            kind: "com.marctg.cfr-platforms.arrivals-widget",
+            provider: Provider(
+                boardType: .arrivals,
+                stationIDKey: SharedConfiguration.arrivalsWidgetStationKey
+            )
+        ) { entry in
+            Station_WidgetEntryView(entry: entry)
+        }
+    }
+}
+
+struct DeparturesWidget: Widget {
+    let kind: String = "com.marctg.cfr-platforms.departures-widget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(
+            kind: "com.marctg.cfr-platforms.departures-widget",
+            provider: Provider(
+                boardType: .departures,
+                stationIDKey: SharedConfiguration.departuresWidgetStationKey
+            )
+        ) { entry in
             Station_WidgetEntryView(entry: entry)
         }
     }
 }
 
 #Preview(as: .systemMedium) {
-    Station_Widget()
+    DeparturesWidget()
 } timeline: {
     BoardEntry(
         date: Date(),
-        station: StationEntity(id: "BucurestiNord", name: "Bucharest North"),
+        station: Station(id: "BucurestiNord", name: "Bucharest North"),
         boardType: .departures,
         board: Board(
             arrivals: [],

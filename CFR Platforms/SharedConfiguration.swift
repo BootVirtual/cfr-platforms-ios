@@ -12,6 +12,9 @@ enum SharedConfiguration {
     static let defaultAPIURL = "http://192.168.1.247:8000"
     static let apiURLkey = "apiURL"
     
+    static let arrivalsWidgetStationKey = "arrivalsWidgetStation"
+    static let departuresWidgetStationKey = "departuresWidgetStation"
+    
     static var defaults: UserDefaults? {
         UserDefaults(suiteName: appGroup)
     }

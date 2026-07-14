@@ -8,14 +8,7 @@
 import Foundation
 import AppIntents
 
-enum BoardType: String, AppEnum {
+enum BoardType{
     case arrivals
     case departures
-    
-    static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Board")
-    
-    static var caseDisplayRepresentations: [Self : DisplayRepresentation] = [
-        .arrivals: "Arrivals",
-        .departures: "Departures"
-    ]
 }

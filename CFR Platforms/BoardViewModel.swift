@@ -28,6 +28,18 @@ class BoardViewModel: ObservableObject {
     @AppStorage(SharedConfiguration.apiURLkey, store: SharedConfiguration.defaults)
     var apiURL = SharedConfiguration.defaultAPIURL
     
+    @AppStorage(
+        SharedConfiguration.arrivalsWidgetStationKey,
+        store: SharedConfiguration.defaults
+    )
+    var arrivalsStation = "BucurestiNord"
+    
+    @AppStorage(
+        SharedConfiguration.departuresWidgetStationKey,
+        store: SharedConfiguration.defaults
+    )
+    var departuresStation = "BucurestiNord"
+    
     func loadStations() async {
         let api = API(baseURL: apiURL)
         

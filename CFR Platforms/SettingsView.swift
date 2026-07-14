@@ -18,6 +18,20 @@ struct SettingsView: View {
                     .textInputAutocapitalization(.never)
                     .keyboardType(.URL)
             }
+            Section("Widgets") {
+                Picker("Arrivals Widget", selection: $viewModel.arrivalsStation) {
+                    ForEach(viewModel.stations) { station in
+                        Text(station.name)
+                            .tag(station.id)
+                    }
+                }
+                Picker("Departures Widget", selection: $viewModel.departuresStation) {
+                    ForEach(viewModel.stations) { station in
+                        Text(station.name)
+                            .tag(station.id)
+                    }
+                }
+            }
         }
         .navigationTitle(Text("Settings"))
         .onDisappear {
