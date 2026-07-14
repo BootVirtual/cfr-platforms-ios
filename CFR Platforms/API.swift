@@ -9,7 +9,6 @@ import Foundation
 
 class API {
     private let baseURL: String
-    private let stationsCacheKey = "cachedStations"
     
     init(baseURL: String) {
         self.baseURL = baseURL
@@ -22,17 +21,13 @@ class API {
         
         let stations = try JSONDecoder().decode([Station].self, from: data)
         
-        UserDefaults.standard.set(try? JSONEncoder().encode(stations), forKey: stationsCacheKey)
+        StationCache.save(stations)
         
         return stations
     }
     
     func cachedStations() -> [Station] {
-        if let data = UserDefaults.standard.data(forKey: stationsCacheKey) {
-            return try! JSONDecoder().decode([Station].self, from: data)
-        }
-        
-        return []
+        return StationCache.stations
     }
     
     func fetchData(for station: Station) async throws -> Board {
