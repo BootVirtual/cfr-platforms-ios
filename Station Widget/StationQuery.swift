@@ -9,19 +9,23 @@ import Foundation
 import AppIntents
 
 struct StationQuery: EntityQuery {
-    func entities(for identifiers: [Station.ID]) async throws -> [Station] {
+    func entities(for identifiers: [StationEntity.ID]) async throws -> [StationEntity] {
         let stations = StationCache.stations
         
-        return stations.filter{
-            identifiers.contains($0.id)
+        return stations.map{
+            StationEntity(id: $0.id, name: $0.name)
         }
     }
     
-    func suggestedEntities() async throws -> [Station] {
+    func suggestedEntities() async throws -> [StationEntity] {
         let stations = StationCache.stations
         
-        print("Stations: ", stations)
-        
-        return stations
+        return stations.map{
+            StationEntity(id: $0.id, name: $0.name)
+        }
+    }
+    
+    func defaultResult() async -> StationEntity? {
+        try? await suggestedEntities().first
     }
 }

@@ -6,19 +6,8 @@
 //
 
 import Foundation
-import AppIntents
 
-struct Station: Identifiable, Hashable, Codable, AppEntity {
-    typealias ID = String
-    
+struct Station: Identifiable, Hashable, Codable {
     let id: String
     let name: String
-    
-    static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Station")
-    
-    var displayRepresentation: DisplayRepresentation {
-        DisplayRepresentation(title: "\(name)")
-    }
-    
-    static var defaultQuery = StationQuery()
 }

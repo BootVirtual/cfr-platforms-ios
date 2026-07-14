@@ -10,34 +10,40 @@ import SwiftUI
 
 struct Provider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> BoardEntry {
-        BoardEntry(date: Date(), station: Station(id: "BucurestiNord", name: "Bucharest North"), boardType: .departures, board: Board(arrivals: [], departures: [])
+        BoardEntry(
+            date: Date(),
+            station: StationEntity(id: "BucurestiNord", name: "Bucharest North"),
+            boardType: .departures,
+            board: Board(arrivals: [], departures: [])
         )
     }
 
     func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> BoardEntry {
-        let station = configuration.station ?? Station(id: "BucurestiNord", name: "Bucharest North")
-        
-        let boardType = configuration.board ?? .departures
-        
-        return BoardEntry(
+        BoardEntry(
             date: Date(),
-            station: station,
-            boardType: boardType,
+            station: StationEntity(id: "BucurestiNord", name: "Bucharest North"),
+            boardType: .departures,
             board: Board(arrivals: [], departures: [])
         )
     }
     
     func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<BoardEntry> {
+        guard let apiURL = UserDefaults(suiteName: "group.com.marctg.cfr-platforms")?.string(forKey: "apiURL") else { return Timeline(entries: [], policy: .never) }
+        
+        let api = API(baseURL: apiURL)
+                      
         guard
             let station = configuration.station,
             let boardType = configuration.board
-        else{
+        else {
             return Timeline(entries: [], policy: .never)
         }
         
-        let api = API(baseURL: (UserDefaults(suiteName: "group.com.marctg.cfr-platforms")?.string(forKey: "apiURL"))!)
-        
-        let board = try! await api.fetchData(for: station)
+        guard
+            let board = try? await api.fetchData(for: Station(id: station.id, name: station.name))
+        else{
+            return Timeline(entries: [], policy: .never)
+        }
         
         let entry = BoardEntry(date: Date(), station: station, boardType: boardType, board: board)
         
@@ -51,7 +57,7 @@ struct Provider: AppIntentTimelineProvider {
 
 struct BoardEntry: TimelineEntry{
     let date: Date
-    let station: Station
+    let station: StationEntity
     let boardType: BoardType
     let board: Board
 }
@@ -91,10 +97,8 @@ struct Station_Widget: Widget {
         AppIntentConfiguration(
             kind: kind,
             intent: ConfigurationAppIntent.self,
-            provider: Provider()
-        ) { entry in
+            provider: Provider()) { entry in
             Station_WidgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
         }
     }
 }
@@ -104,7 +108,7 @@ struct Station_Widget: Widget {
 } timeline: {
     BoardEntry(
         date: Date(),
-        station: Station(id: "BucurestiNord", name: "Bucharest North"),
+        station: StationEntity(id: "BucurestiNord", name: "Bucharest North"),
         boardType: .departures,
         board: Board(
             arrivals: [],

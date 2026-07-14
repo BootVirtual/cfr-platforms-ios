@@ -59,6 +59,7 @@
 		7488E92D30060D7100201509 /* Station WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Station WidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7488E92F30060D7200201509 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		7488E93130060D7200201509 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		7488E95030062B5600201509 /* Station WidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Station WidgetExtension.entitlements"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -73,6 +74,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				API.swift,
+				BoardViewModel.swift,
 				Models/Board.swift,
 				Models/Station.swift,
 				Models/Train.swift,
@@ -80,12 +82,28 @@
 			);
 			target = 7488E92C30060D7100201509 /* Station WidgetExtension */;
 		};
+		7488E9553006372300201509 /* Exceptions for "Station Widget" folder in "CFR Platforms" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				StationEntity.swift,
+				StationQuery.swift,
+			);
+			target = 744E0FA93004D85C006E1B5D /* CFR Platforms */;
+		};
+		7495E46630063DB200BEF153 /* Exceptions for "CFR Platforms" folder in "CFR Platforms" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"CFR-Platforms-Info.plist",
+			);
+			target = 744E0FA93004D85C006E1B5D /* CFR Platforms */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		744E0FAC3004D85C006E1B5D /* CFR Platforms */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				7495E46630063DB200BEF153 /* Exceptions for "CFR Platforms" folder in "CFR Platforms" target */,
 				7488E9493006170E00201509 /* Exceptions for "CFR Platforms" folder in "Station WidgetExtension" target */,
 			);
 			path = "CFR Platforms";
@@ -104,6 +122,7 @@
 		7488E93330060D7200201509 /* Station Widget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				7488E9553006372300201509 /* Exceptions for "Station Widget" folder in "CFR Platforms" target */,
 				7488E94030060D7700201509 /* Exceptions for "Station Widget" folder in "Station WidgetExtension" target */,
 			);
 			path = "Station Widget";
@@ -148,6 +167,7 @@
 		744E0FA13004D85C006E1B5D = {
 			isa = PBXGroup;
 			children = (
+				7488E95030062B5600201509 /* Station WidgetExtension.entitlements */,
 				7431224C3004FC59001B0CEF /* README.md */,
 				744E0FAC3004D85C006E1B5D /* CFR Platforms */,
 				744E0FBA3004D85E006E1B5D /* CFR PlatformsTests */,
@@ -527,11 +547,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "CFR Platforms/CFR Platforms.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FJTMQGHAQ4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "CFR-Platforms-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "CFR Arrivals/Departures";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -562,11 +584,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "CFR Platforms/CFR Platforms.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FJTMQGHAQ4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "CFR-Platforms-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "CFR Arrivals/Departures";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -677,6 +701,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = "Station WidgetExtension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FJTMQGHAQ4;
@@ -707,6 +732,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = "Station WidgetExtension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FJTMQGHAQ4;
