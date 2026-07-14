@@ -25,8 +25,8 @@ class BoardViewModel: ObservableObject {
         }
     }
     
-    @AppStorage("apiURL", store: UserDefaults(suiteName: "group.com.marctg.cfr-platforms"))
-    var apiURL = "http://192.168.1.247:8000"
+    @AppStorage("apiURL", store: SharedConfiguration.defaults)
+    var apiURL = SharedConfiguration.defaultAPIURL
     
     func loadStations() async {
         let api = API(baseURL: apiURL)

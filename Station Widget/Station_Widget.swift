@@ -49,7 +49,7 @@ struct Provider: AppIntentTimelineProvider {
         }
         
         guard
-            let apiURL = UserDefaults(suiteName: "group.com.marctg.cfr-platforms")?.string(forKey: "apiURL"),
+            let apiURL = SharedConfiguration.defaults?.string(forKey: "apiURL"),
             !apiURL.isEmpty
         else{
             print("apiURL not configured")

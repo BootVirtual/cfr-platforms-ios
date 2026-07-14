@@ -9,6 +9,10 @@ import SwiftUI
 
 @main
 struct CFR_PlatformsApp: App {
+    init() {
+        SharedConfiguration.installDefaults()
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
